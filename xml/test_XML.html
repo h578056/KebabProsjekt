@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <link rel="stylesheet"href="../StyleSheet.css">
+      <link rel="stylesheet" href="../w3.css">
+      <script src="jquery/jquery-3.3.1.min.js"></script>
+      <script>
+        function createXml(){
+          var xml="<KEBAB>"          
+          var tr=$("#kebabSjapper")
+          var hentxml=$("tr",tr).each(function(index1,element) {
+            xml+="<SJAPPER>"            
+            $("td",this).each(function(index,element)  {
+              if(index==0)
+                xml+="<NAVN>"+$(this).html()+"</NAVN>"
+              else if(index==1)
+                xml+="<ADRESSE>"+$(this).html()+"</ADRESSE>"
+              else if(index==2)
+                xml+="<RATING>"+$(this).html()+"</RATING>"
+            });
+            xml+="</SJAPPER>"
+          });      
+          xml+="</KEBAB>"
+          window.localStorage.setItem("keybabxmldoc",xml)
+        }
+        function add(){
+                var index1=$("tr").lenght-1
+                var navn=$("#navn").val();
+                var adresse=$("#adresse").val();
+                var rating=$("#rating").val();
+                var row="<tr id=\"slett_"+index1+"\">"+"<td>"+navn+"</td>"+"<td>"+adresse+"</td>"+"<td>"+rating+"</td>"+"<td>"+"<button onclick=\"slett("+index1+")\" class=\"mybutton\"> Slett"+"</button>"+"</td>" +"</tr>"
+                var tr=$("#kebabSjapper").append(row)  
+                createXml();
+        }
+        function slett(index){           
+          $("#slett_"+index).remove()
+        }
+          function readxml(xmlDoc1){
+            var xmlDoc = $.parseXML( xmlDoc1 ); 
+              var $xml = $(xmlDoc);
+              var sjapper= $xml.find("SJAPPER");
+              $( sjapper ).each(function(index1) {
+                index1=index1+1
+                var navn=$(this).find('NAVN').text();
+                var rating=$(this).find('RATING').text()
+                var adresse=$(this).find('ADRESSE').text()
+                var row="<tr id=\"slett_"+index1+"\">"+"<td>"+navn+"</td>"+"<td>"+adresse+"</td>"+"<td>"+rating+"</td>"+"<td>"+"<button onclick=\"slett("+index1+")\" class=\"mybutton\"> Slett"+"</button>"+"</td>" +"</tr>"
+                var tr=$("#kebabSjapper").append(row)                
+              })
+          }
+         $(document).ready(function(){   
+            var xmlDoc1=window.localStorage.getItem("keybabxmldoc")
+            //xmlDoc1=false
+            if(xmlDoc1){
+              readxml(xmlDoc1)
+            }     
+            else{
+                $.get('testXMLdoc.xml', function(xmlDoc1){
+                  readxml(xmlDoc1)
+                }) 
+            } 
+          });
+          </script>
+  </head>
+<body>
+  "NB husk for å åpne fra filer i chrome: --allow-file-access-from-files, lim dette inn i google chrome egenskaper og mål.!"
+  <table class="w3-table-all">
+      <tr>
+        <th>Navn</th>
+        <th>Adresse</th>
+        <th>Rating 0/10</th>
+      </tr>
+      <tbody>
+        <tr>
+          <td><input id="navn" type="text"  /></td>
+          <td><input id="adresse" type="text"  /></td>
+          <td><input id="rating" type="text"  /></td>
+          <td><button onclick="add()">Legg til</button></td>
+        </tr>
+      </tbody>
+    </table>
+  <table class="w3-table-all">
+    <tr>
+      <th>Navn</th>
+      <th>Adresse</th>
+      <th>Rating 0/10</th>
+    </tr>
+    <tbody id="kebabSjapper">
+    </tbody>
+  </table>
+</body>  
+</html>
